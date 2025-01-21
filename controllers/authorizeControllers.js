@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const generateJwt = require("../utils/generateJwt");
-const User = require("../model/User");
+const User = require("../model/user");
 
 
 const registerUsers = async (req, res) => {
@@ -13,7 +13,7 @@ const registerUsers = async (req, res) => {
             return res.status(401).send("Email id already exists.");
 
         }
-        const salt = await bcrypt.genSalt(11);
+        const salt = await bcrypt.genSalt(10);
         const bcryptPassword = await bcrypt.hash(password, salt);
 
         const newUser = await User.create({
