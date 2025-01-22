@@ -36,7 +36,7 @@ const loginUser = async (req, res) => {
     try {
         const user = await User.findByEmail(email);
         if (!user) {
-            return res.status(401).json("Invaild credentials");
+            return res.status(401).json("User not found");
         }
         const validPassword = await bcrypt.compare(password, user.user_password);
         if (!validPassword) {
@@ -51,7 +51,30 @@ const loginUser = async (req, res) => {
     }
 }
 
-// 
+const forgotPassword = async (req, res) => {
+    const { email, newPassword } = req.body;
+
+    try {
+        const user = await User.findByEmail(email);
+        if (!user) {
+            return res.status(401).json("User not found");
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const bcryptPassword = await bcrypt.hash(newPassword, salt); // Corrected here
+
+        const updatedUser = await User.updatePassword({ email, password: bcryptPassword });
+
+        if (!updatedUser) {
+            return res.status(500).json("Failed to update password");
+        }
+        return res.status(200).json("Password updated successfully");
+    } catch (error) {
+        console.error("Error in forgotPassword:", error.message);
+        res.status(500).json("Internal Server Error");
+    }
+};
+
 const verifyUser = async (req, res) => {
     try {
         res.json(true);
@@ -63,4 +86,4 @@ const verifyUser = async (req, res) => {
 
 }
 
-module.exports = { registerUsers, loginUser, verifyUser }
+module.exports = { registerUsers, loginUser, forgotPassword, verifyUser }

@@ -15,6 +15,20 @@ class User {
 
         return result.rows[0];
     }
+
+    static async updatePassword({ email, password}){
+        const result = await pool.query(
+"UPDATE users SET user_password = $1 WHERE user_email = $2 RETURNING *", [password, email]
+    );
+        return result.rows[0];
+    }
+
+    static async deleteUser({email}){
+        const result = await pool.query(
+            "DELETE FROM users WHERE user_email = $1 RETURNING *",[email]
+        );
+        return result.rows[0];
+    }
 }
 
 module.exports = User;

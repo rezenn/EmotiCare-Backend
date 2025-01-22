@@ -6,6 +6,7 @@ const authController = require("../controllers/authorizeControllers")
 
 router.post("/register", validation, authController.registerUsers);
 router.post("/login", validation, authController.loginUser);
+router.post("/forgotPassword", validation, authController.forgotPassword);
 router.get("/verified", authorization, authController.verifyUser);
 
 module.exports = router;
