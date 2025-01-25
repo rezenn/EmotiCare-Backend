@@ -18,8 +18,8 @@ class User {
 
     static async updatePassword({ email, password}){
         const result = await pool.query(
-"UPDATE users SET user_password = $1 WHERE user_email = $2 RETURNING *", [password, email]
-    );
+            "UPDATE users SET user_password = $1 WHERE user_email = $2 RETURNING *", [password, email]
+        );
         return result.rows[0];
     }
 

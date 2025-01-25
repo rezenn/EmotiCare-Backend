@@ -15,3 +15,10 @@ CREATE TABLE moods (
     mood_label VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE notes (
+    note_id SERIAL PRIMARY KEY,
+    user_id uuid REFERENCES users(user_id) ON DELETE CASCADE,
+    note_desc text,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
