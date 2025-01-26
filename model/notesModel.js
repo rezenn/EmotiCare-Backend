@@ -1,4 +1,4 @@
-const pool = require('../database/databaseConnection');
+const pool = require('../database/DatabaseConnection');
 
 class Notes {
     static async addNotes(userId, noteDesc) {

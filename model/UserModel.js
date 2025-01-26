@@ -1,4 +1,4 @@
-const pool = require("../database/databaseConnection");
+const pool = require("../database/DatabaseConnection");
 
 class User {
     static async findByEmail(email) {

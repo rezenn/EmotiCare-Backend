@@ -1,4 +1,4 @@
-const pool = require('../database/databaseConnection');
+const pool = require('../database/DatabaseConnection');
 
 const getUserById = async (userId) => {
     const result = await pool.query(

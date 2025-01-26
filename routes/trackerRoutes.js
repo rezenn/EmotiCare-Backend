@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { getUserInfo, addMood, getMoods } = require("../controllers/trackerControllers");
-const authorize = require("../middleware/authMiddleware");
+const authorize = require("../middleware/AuthMiddleware");
 
 router.get("/", authorize, getUserInfo);
 router.post("/", authorize, addMood);

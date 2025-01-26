@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 5000;
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/moodTracker", require("./routes/trackerRoutes"));
 app.use("/note", require("./routes/noteRoutes"));
+app.use('/challenge', require("./routes/ChallengeRoutes"));
 
 app.listen(PORT, () => {
     console.log("The app is running at port: " + PORT);

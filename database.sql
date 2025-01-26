@@ -4,6 +4,7 @@ create table users(
     user_name varchar(255) not null,
     user_email varchar(255) unique not null,
     user_password varchar(255)  not null,
+    last_reset_date DATE DEFAULT NULL,
     created_at date default current_date
 );
 
@@ -21,4 +22,24 @@ CREATE TABLE notes (
     user_id uuid REFERENCES users(user_id) ON DELETE CASCADE,
     note_desc text,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE challenges (
+    challenge_id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    IsPreloaded BOOLEAN DEFAULT FALSE,
+    CreatedBy uuid REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE userChallenges (
+    user_challenge_id SERIAL PRIMARY KEY,
+    user_id uuid REFERENCES users(user_id) ON DELETE CASCADE,
+    challenge_id INT NOT NULL REFERENCES Challenges(challenge_id) ON DELETE CASCADE,
+    IsDone BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE dailyChallenges (
+    daily_challenge_id SERIAL PRIMARY KEY,
+    user_id uuid REFERENCES users(user_id) ON DELETE CASCADE,
+    challenge_id INT NOT NULL REFERENCES Challenges(challenge_id) ON DELETE CASCADE,
+    date_selected DATE NOT NULL
 );
