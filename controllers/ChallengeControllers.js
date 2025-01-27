@@ -27,18 +27,38 @@ const getChallenges = async (req, res) => {
     }
 }
 
-const markChallengeAsDone = async (req,res) => {
-    const {challenge_id} = req.body;
+const markChallengeAsDone = async (req, res) => {
+    const { challengeID } = req.body;
     const userId = req.user;
-
+  
     try {
-        const markChallenge = await Challenges.markChallengeAsDone(userId,challenge_id);
-        res.json({message: "Challenge is marked done."})
-        
+      const updatedChallenge = await Challenges.markChallengeAsDone(userId, challengeID);
+      res.json({ message: "Challenge toggled successfully.", challenge: updatedChallenge });
     } catch (error) {
-        console.error(error.message);
-        res.status(500).json({error: "Failed to mark Challenges as done"})
+      console.error(error.message);
+      res.status(500).json({ error: "Failed to toggle challenge status." });
     }
-}
+  };
 
-module.exports ={ getChallenges, addChallenge, markChallengeAsDone}
+  const deleteChallenge = async (req, res) => {
+    const { challengeID } = req.params;
+    const userId = req.user;
+  
+    try {
+      const deletedChallenge = await Challenges.deleteChallenge(challengeID);
+  
+      if (!deletedChallenge) {
+        return res.status(404).json({ error: "Challenge not found." });
+      }
+  
+      // Success response
+      res.status(200).json({ 
+        message: "Challenge deleted successfully.", 
+        challenge: deletedChallenge 
+      });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: "Failed to delete challenge." });
+    }
+  };
+module.exports ={ getChallenges, addChallenge, markChallengeAsDone, deleteChallenge}
