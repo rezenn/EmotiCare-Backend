@@ -1,6 +1,13 @@
 const pool = require("../database/DatabaseConnection");
 
 class User {
+    static async getUserById (userId){
+        const result = await pool.query(
+            "SELECT user_name, user_email FROM users WHERE user_id = $1", // Include user_email
+            [userId]
+        );
+        return result.rows[0];
+    };
     static async findByEmail(email) {
         const result = await pool.query(
             "SELECT * FROM users WHERE user_email = $1", [email]
@@ -31,7 +38,6 @@ class User {
         return result.rows[0];
     }
     
-    
     static async updateProfile({ user_name, full_name, birthday, gender, profile_picture_url, email }) {
         const result = await pool.query(
             "UPDATE users SET user_name = $1, full_name = $2, birthday = $3, gender = $4, profile_picture_url = $5 WHERE user_email = $6 RETURNING user_name, full_name, birthday, gender, profile_picture_url, user_email",
@@ -40,7 +46,6 @@ class User {
         return result.rows[0];
     }
     
-
     static async deleteUser({email}){
         const result = await pool.query(
             "DELETE FROM users WHERE user_email = $1 RETURNING *",[email]
