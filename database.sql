@@ -3,6 +3,10 @@ create table users(
     uuid_generate_v4(),
     user_name varchar(255) not null,
     user_email varchar(255) unique not null,
+    birthday DATE,
+    full_name varchar(255),
+    gender varchar(255),
+    profile_picture_url varchar(255),
     user_password varchar(255)  not null,
     last_reset_date DATE DEFAULT NULL,
     created_at date default current_date
