@@ -14,6 +14,12 @@ class User {
         );
         return result.rows[0];
     }
+    static async createdDate(email) {
+        const result = await pool.query(
+            "SELECT created_at FROM users WHERE user_email = $1", [email]
+        );
+        return result.rows[0];
+    }
 
     static async create({ name, email, password }) {
         const result = await pool.query(
@@ -32,7 +38,7 @@ class User {
 
     static async getProfile({ email }) {
         const result = await pool.query(
-            "SELECT user_name, full_name, birthday, gender, profile_picture_url, user_email FROM users WHERE user_email = $1",
+            "SELECT user_name, full_name, birthday, gender, profile_picture_url, user_email, created_at FROM users WHERE user_email = $1",
             [email]
         );
         return result.rows[0];
