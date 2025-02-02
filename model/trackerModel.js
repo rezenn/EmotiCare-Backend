@@ -22,8 +22,6 @@ class Mood  {
             "SELECT mood_date, mood_emoji, mood_label FROM moods WHERE user_id = $1 ORDER BY mood_date ASC", [userId]
         );
         return result.rows;
-
-
     }
 }
 

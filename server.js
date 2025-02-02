@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 5000;
 //routes
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/profile", require("./routes/UserRoutes"));
-app.use("/moodTracker", require("./routes/trackerRoutes"));
+app.use("/moodTracker", require("./routes/TrackerRoutes"));
 app.use("/note", require("./routes/noteRoutes"));
 app.use('/challenge', require("./routes/ChallengeRoutes"));
 

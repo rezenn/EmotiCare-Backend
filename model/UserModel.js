@@ -3,7 +3,7 @@ const pool = require("../database/DatabaseConnection");
 class User {
     static async getUserById (userId){
         const result = await pool.query(
-            "SELECT user_name, user_email FROM users WHERE user_id = $1", // Include user_email
+            "SELECT user_name, user_email FROM users WHERE user_id = $1",
             [userId]
         );
         return result.rows[0];

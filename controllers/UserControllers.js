@@ -1,4 +1,5 @@
 const User = require("../model/UserModel");
+const { getUserById, Mood } = require("../model/trackerModel");
 
 const userController = {
     async getUserEmail(req, res)  {
@@ -27,7 +28,6 @@ const userController = {
 
             const { user_password, ...userProfile } = user;
             res.status(200).json(userProfile);
-            console.log("Fetched User:", user);
 
         } catch (error) {
             console.error(error.message);
