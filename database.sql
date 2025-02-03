@@ -47,3 +47,12 @@ CREATE TABLE dailyChallenges (
     challenge_id INT NOT NULL REFERENCES Challenges(challenge_id) ON DELETE CASCADE,
     date_selected DATE NOT NULL
 );
+
+CREATE TABLE dailyJournals (
+    dailyJournal_id SERIAL PRIMARY KEY,
+    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    entry_date DATE NOT NULL,
+    entry_time TIME NOT NULL,
+    description TEXT NOT NULL
+);

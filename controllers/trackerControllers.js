@@ -1,4 +1,4 @@
-const { getUserById, Mood } = require("../model/TrackerModel");
+const { getUserById, Mood } = require("../model/trackerModel");
 
 const getUserInfo = async (req, res) => {
   try {
