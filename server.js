@@ -5,7 +5,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const cors = require('cors');
-const sequelize = require("./database/dbConnection")
+// const sequelize = require("./database/dbConnection")
 app.use(cors());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // middleware

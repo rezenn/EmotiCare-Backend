@@ -18,23 +18,24 @@ const addMood = async (req, res) => {
     const { moodDate, moodEmoji, moodLabel } = req.body;
     const userId = req.user;
 
-    const newMood = await Mood.addMood(userId, moodDate, moodEmoji, moodLabel);
-    res.status(201).json(newMood);
+    const result = await Mood.addOrUpdateMood(userId, moodDate, moodEmoji, moodLabel);
+    res.status(200).json(result);
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ error: "Failed to add mood." });
+    res.status(500).json({ error: "Failed to update mood." });
+  }
+};
+const getMoods = async (req, res) => {
+  try {
+      const userId = req.user;
+      const moods = await Mood.getMoods(userId);
+      res.status(200).json(moods);
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: "Failed to fetch moods." });
   }
 };
 
-const getMoods = async (req, res) => {
-  try {
-    const userId = req.user;
-    const moods = await Mood.getMoodByUser(userId);
-    res.status(200).json(moods);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: "Failed to get moods." });
-  }
-};
+
 
 module.exports = { getUserInfo, addMood, getMoods };

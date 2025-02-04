@@ -23,6 +23,42 @@ class Mood  {
         );
         return result.rows;
     }
+    static async getMoods(userId) {
+        const result = await pool.query(
+            "SELECT * FROM moods WHERE user_id = $1",
+            [userId]
+        );
+        return result.rows;
+    }
+    static async addOrUpdateMood(userId, date, emoji, label) {
+        const existingMood = await pool.query(
+            "SELECT * FROM moods WHERE user_id = $1 AND mood_date = $2",
+            [userId, date]
+        );
+    
+        if (existingMood.rows.length > 0) {
+            if (existingMood.rows[0].mood_emoji === emoji) {
+                // If the same mood is selected, delete the mood
+                await pool.query("DELETE FROM moods WHERE user_id = $1 AND mood_date = $2", [userId, date]);
+                return { message: "Mood deleted" };
+            } else {
+                // If a different mood is selected, update the mood
+                const result = await pool.query(
+                    "UPDATE moods SET mood_emoji = $1, mood_label = $2 WHERE user_id = $3 AND mood_date = $4 RETURNING *",
+                    [emoji, label, userId, date]
+                );
+                return result.rows[0];
+            }
+        } else {
+            // If no mood exists, insert a new one
+            const result = await pool.query(
+                "INSERT INTO moods (user_id, mood_date, mood_emoji, mood_label) VALUES ($1, $2, $3, $4) RETURNING *",
+                [userId, date, emoji, label]
+            );
+            return result.rows[0];
+        }
+    }
+    
 }
 
 module.exports = { getUserById,Mood };
