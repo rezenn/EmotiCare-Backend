@@ -18,6 +18,7 @@ app.use("/profile", require("./routes/UserRoutes"));
 app.use("/moodTracker", require("./routes/TrackerRoutes"));
 app.use("/note", require("./routes/NoteRoutes"));
 app.use('/challenge', require("./routes/ChallengeRoutes"));
+app.use('/dailyJournal', require("./routes/DailyjournalRoutes"));
 
 
 app.listen(PORT, () => {

@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { addChallenge, getChallenges, markChallengeAsDone, deleteChallenge } = require("../controllers/ChallengeControllers");
+const { addChallenge, 
+    getChallenges, 
+    markChallengeAsDone, 
+    deleteChallenge } = require("../controllers/ChallengeControllers");
 const authorize = require("../middleware/AuthMiddleware");
 
 router.post('/add', authorize, addChallenge); 
