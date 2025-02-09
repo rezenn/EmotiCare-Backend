@@ -43,13 +43,12 @@ const markChallengeAsDone = async (req, res) => {
   const { challengeID } = req.body;
   const userId = req.user;
 
-  console.log(`Marking challenge as done: User ID - ${userId}, Challenge ID - ${challengeID}`);
 
   try {
     const updatedChallenge = await Challenges.markChallengeAsDone(userId, challengeID);
     res.json({ message: "Challenge toggled successfully.", challenge: updatedChallenge });
   } catch (error) {
-    console.error("Error occurred while toggling challenge:", error.message);
+    console.error(error.message);
     res.status(500).json({ error: "Failed to toggle challenge status." });
   }
 };
