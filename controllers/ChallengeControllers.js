@@ -26,19 +26,34 @@ const getChallenges = async (req, res) => {
         res.status(500).json({error: "Failed to fetch Challenge"})
     }
 }
+const getDailyChallenges = async (req, res) => {
+    const userId = req.user;
+
+    try {
+        const getChallenges = await Challenges.getDailyChallenges(userId);
+        res.json(getChallenges);
+        
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({error: "Failed to fetch Challenge"})
+    }
+}
 
 const markChallengeAsDone = async (req, res) => {
-    const { challengeID } = req.body;
-    const userId = req.user;
-  
-    try {
-      const updatedChallenge = await Challenges.markChallengeAsDone(userId, challengeID);
-      res.json({ message: "Challenge toggled successfully.", challenge: updatedChallenge });
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).json({ error: "Failed to toggle challenge status." });
-    }
-  };
+  const { challengeID } = req.body;
+  const userId = req.user;
+
+  console.log(`Marking challenge as done: User ID - ${userId}, Challenge ID - ${challengeID}`);
+
+  try {
+    const updatedChallenge = await Challenges.markChallengeAsDone(userId, challengeID);
+    res.json({ message: "Challenge toggled successfully.", challenge: updatedChallenge });
+  } catch (error) {
+    console.error("Error occurred while toggling challenge:", error.message);
+    res.status(500).json({ error: "Failed to toggle challenge status." });
+  }
+};
+
 
   const deleteChallenge = async (req, res) => {
     const { challengeID } = req.params;
@@ -61,4 +76,8 @@ const markChallengeAsDone = async (req, res) => {
       res.status(500).json({ error: "Failed to delete challenge." });
     }
   };
-module.exports ={ getChallenges, addChallenge, markChallengeAsDone, deleteChallenge}
+module.exports ={ getChallenges,
+  getDailyChallenges,
+   addChallenge, 
+   markChallengeAsDone,
+    deleteChallenge}

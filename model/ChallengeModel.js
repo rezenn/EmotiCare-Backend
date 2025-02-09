@@ -43,43 +43,105 @@ class Challenges{
             AND 
               uc.user_id = $1 
             WHERE 
-              c.IsPreloaded = TRUE 
-            OR 
-              c.CreatedBy = $1`,
+              c.CreatedBy = $1`, // Only challenges created by the user
             [userID]
           );
       
           return result.rows;
         } catch (error) {
           console.error(error.message);
-          throw new Error("Failed to fetch challenges.");
+          throw new Error("Failed to fetch user-created challenges.");
         }
       }
 
-    static async markChallengeAsDone(userID, challengeID) {
-        try {
-          const result = await pool.query(
-            "UPDATE userChallenges SET IsDone = NOT IsDone WHERE user_id = $1 AND challenge_id = $2 RETURNING *",
-            [userID, challengeID]
-          );
-      
-          if (result.rows.length === 0) {
-            throw new Error("Challenge not found for the user.");
-          }
-      
-          return result.rows[0];
-        } catch (error) {
-          console.error(error.message);
-          throw new Error("Failed to mark challenge as done.");
-        }
-      }
-
-    static async getDailyChallenges(userID){
-        const result = await pool.query(
-            "SELECT c.* FROM dailyChallenges dc JOIN challenges c ON dc.challenge_id = c.challenge_id WHERE dc.user_id = $1 AND dc.date_selected = CURRENT_DATE",[userID]
+      static async getDailyChallenges(userID) {
+    try {
+        // Check if user already has daily challenges stored for today
+        const checkExisting = await pool.query(
+            `SELECT challenges, last_updated 
+             FROM daily_challenges 
+             WHERE user_id = $1 
+             AND last_updated >= NOW() - INTERVAL '1 day'`,
+            [userID]
         );
-        return result.rows;
+
+        if (checkExisting.rowCount > 0) {
+            return checkExisting.rows[0].challenges; // Return cached challenges
+        }
+
+        // If no existing challenges, generate new ones
+        const result = await pool.query(
+            `SELECT 
+                c.challenge_id, 
+                c.title, 
+                c.IsPreloaded, 
+                c.CreatedBy, 
+                COALESCE(uc.IsDone, FALSE) AS isdone
+            FROM 
+                challenges c 
+            LEFT JOIN 
+                userChallenges uc 
+            ON 
+                c.challenge_id = uc.challenge_id 
+            AND 
+                uc.user_id = $1 
+            WHERE 
+                (c.IsPreloaded = TRUE OR c.CreatedBy = $1) 
+                AND (uc.IsDone IS NULL OR uc.IsDone = FALSE)
+            ORDER BY RANDOM() 
+            LIMIT 7`,
+            [userID]
+        );
+
+        const dailyChallenges = result.rows;
+
+        await pool.query(
+            `INSERT INTO daily_challenges (user_id, challenges, last_updated) 
+             VALUES ($1, $2, NOW()) 
+             ON CONFLICT (user_id) DO UPDATE 
+             SET challenges = EXCLUDED.challenges, last_updated = NOW()`,
+            [userID, JSON.stringify(dailyChallenges)]
+        );
+
+        return dailyChallenges;
+    } catch (error) {
+        console.error(error.message);
+        throw new Error("Failed to fetch daily challenges.");
     }
+}
+
+
+static async markChallengeAsDone(userID, challengeID) {
+  try {
+    // Check if the user has the challenge in the userChallenges table
+    const challengeCheck = await pool.query(
+      "SELECT * FROM userChallenges WHERE user_id = $1 AND challenge_id = $2",
+      [userID, challengeID]
+    );
+
+    if (challengeCheck.rowCount === 0) {
+      throw new Error("Challenge not found for the user.");
+    }
+
+    // Toggle the challenge status if it exists
+    const result = await pool.query(
+      "UPDATE userChallenges SET isdone = NOT isdone WHERE user_id = $1 AND challenge_id = $2 RETURNING *",
+      [userID, challengeID]
+    );
+
+    if (result.rows.length === 0) {
+      throw new Error("Failed to toggle challenge status.");
+    }
+
+    return result.rows[0]; // Return the updated challenge
+  } catch (error) {
+    console.error(error.message);
+    throw new Error("Failed to mark challenge as done.");
+  }
+}
+
+
+
     static async deleteChallenge(challengeID) {
         try {
           // Start a transaction for  atomicity

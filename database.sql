@@ -41,11 +41,10 @@ CREATE TABLE userChallenges (
     IsDone BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE dailyChallenges (
-    daily_challenge_id SERIAL PRIMARY KEY,
-    user_id uuid REFERENCES users(user_id) ON DELETE CASCADE,
-    challenge_id INT NOT NULL REFERENCES Challenges(challenge_id) ON DELETE CASCADE,
-    date_selected DATE NOT NULL
+CREATE TABLE daily_challenges (
+    user_id INT REFERENCES users(user_id) PRIMARY KEY,
+    challenges JSONB NOT NULL,
+    last_updated TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE dailyJournals (
