@@ -83,51 +83,47 @@ class Challenges{
         }
       }
 
-     static async markChallengeAsDone(userID, challengeID) {
-  try {
+      static async markChallengeAsDone(userID, challengeID) {
+        try {
+          // Check if the challenge exists
+          const challengeResult = await pool.query(
+            "SELECT * FROM challenges WHERE challenge_id = $1",
+            [challengeID]
+          );
+      
+          if (challengeResult.rowCount === 0) {
+            throw new Error("Challenge not found.");
+          }
+      
+          // Check if the user already has this challenge in `userChallenges`
+          const existingChallenge = await pool.query(
+            "SELECT * FROM userChallenges WHERE user_id = $1 AND challenge_id = $2",
+            [userID, challengeID]
+          );
+      
+          if (existingChallenge.rowCount === 0) {
+            // If not exists, insert a new row
+            await pool.query(
+              "INSERT INTO userChallenges (user_id, challenge_id, isdone) VALUES ($1, $2, true)",
+              [userID, challengeID]
+            );
+            return { success: true, message: "Challenge marked as done." };
+          } else {
+            // If exists, toggle isdone status
+            const updatedResult = await pool.query(
+              "UPDATE userChallenges SET isdone = NOT isdone WHERE user_id = $1 AND challenge_id = $2 RETURNING isdone",
+              [userID, challengeID]
+            );
+            return { success: true, message: "Challenge status updated.", isdone: updatedResult.rows[0].isdone };
+          }
+        } catch (error) {
+          console.error("Error in markChallengeAsDone:", error.message);
+          throw new Error("Failed to update challenge status.");
+        }
+      }
+      
 
-    const challengeResult = await pool.query(
-      "SELECT * FROM challenges WHERE challenge_id = $1",
-      [challengeID]
-    );
-
-    const challenge = challengeResult.rows[0];
-
-    if (!challenge) {
-      throw new Error("Challenge not found.");
-    }
-
-    // If the challenge is preloaded, do not allow marking as done
-    if (challenge.IsPreloaded) {
-      throw new Error("Cannot mark preloaded challenges as done.");
-    }
-
-    const challengeCheck = await pool.query(
-      "SELECT * FROM userChallenges WHERE user_id = $1 AND challenge_id = $2",
-      [userID, challengeID]
-    );
-
-    if (challengeCheck.rowCount === 0) {
-      throw new Error("Challenge not found for the user.");
-    }
-
-    const result = await pool.query(
-      "UPDATE userChallenges SET isdone = NOT isdone WHERE user_id = $1 AND challenge_id = $2 RETURNING *",
-      [userID, challengeID]
-    );
-
-    if (result.rows.length === 0) {
-      throw new Error("Failed to toggle challenge status.");
-    }
-
-    return result.rows[0];
-  } catch (error) {
-    console.error("Error in markChallengeAsDone:", error.message); // Log the error
-    throw new Error("Failed to mark challenge as done.");
-  }
-}
-
-    static async deleteChallenge(challengeID) {
+  static async deleteChallenge(challengeID) {
         try {
           // Start a transaction for  atomicity
           await pool.query('BEGIN');
@@ -148,7 +144,38 @@ class Challenges{
           console.error(error.message);
           throw new Error("Failed to delete challenge.");
         }
-      }
+  }
+
+  static async countAllChallenge(userId) {
+    try {
+        const result = await pool.query(
+            `SELECT COUNT(*) FROM challenges 
+             LEFT JOIN userChallenges uc ON challenges.challenge_id = uc.challenge_id 
+             AND uc.user_id = $1 
+             WHERE challenges.IsPreloaded = true OR challenges.CreatedBy = $1`,
+            [userId]
+        );
+        return result.rows[0].count;
+    } catch (error) {
+        console.error(error.message);
+        throw new Error("Failed to count all challenges.");
+    }
+}
+
+static async countAllCompleteChallenge(userId) {
+  try {
+      const result = await pool.query(
+          `SELECT COUNT(*) FROM userChallenges 
+          WHERE IsDone = true AND user_id = $1`,
+          [userId]
+      );
+      return result.rows[0].count;
+  } catch (error) {
+      console.error("Error in countAllCompleteChallenge:", error.message);
+      throw new Error("Failed to count completed challenges.");
+  }
+}
+
 }
 
 module.exports = Challenges;

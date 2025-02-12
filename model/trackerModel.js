@@ -58,6 +58,30 @@ class Mood  {
             return result.rows[0];
         }
     }
+    static async countAllMoods(userId) {
+        const result = await pool.query("SELECT COUNT(*) FROM moods WHERE user_id = $1",
+             [userId]
+            );
+            return result.rows[0].count;
+    }
+    static async getCurrentStreak(userId) {
+        const result = await pool.query(`
+            WITH consecutive_dates AS (
+                SELECT 
+                    mood_date,
+                    LAG(mood_date) OVER (ORDER BY mood_date) AS prev_date
+                FROM moods
+                WHERE user_id = $1
+            )
+            SELECT COUNT(*)  AS streak
+            FROM consecutive_dates
+            WHERE mood_date = prev_date + INTERVAL '1 day'
+               OR prev_date IS NULL;
+        `, [userId]);
+    
+        return result.rows[0].streak;
+    }
+    
     
 }
 

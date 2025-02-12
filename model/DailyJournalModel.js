@@ -26,6 +26,18 @@ class Journal {
             throw new Error("Failed to fetch journal.");
         }
     }
+    static async countAllJournal(userId){
+        try {
+            const result = await pool.query("SELECT COUNT(*) FROM dailyJournals WHERE user_id = $1",
+                [userId]
+            );
+            return result.rows[0].count;
+
+        } catch (error) {
+            console.error(error.message);
+            throw new Error("Failed to count all journal.");
+        }
+    }
 }
 
 module.exports = Journal;

@@ -42,8 +42,6 @@ const getDailyChallenges = async (req, res) => {
 const markChallengeAsDone = async (req, res) => {
   const { challengeID } = req.body;
   const userId = req.user;
-
-
   try {
     const updatedChallenge = await Challenges.markChallengeAsDone(userId, challengeID);
     res.json({ message: "Challenge toggled successfully.", challenge: updatedChallenge });
@@ -75,8 +73,32 @@ const markChallengeAsDone = async (req, res) => {
       res.status(500).json({ error: "Failed to delete challenge." });
     }
   };
+
+  const countAllChallenge = async (req, res) => {
+    try {
+      const userId = req.user;
+      const countChallenge = await Challenges.countAllChallenge(userId);
+      res.status(200).json({count_challenges: parseInt(countChallenge)});
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: "Failed to count all challenges." });
+    }
+  };
+
+  const countAllCompleteChallenge = async (req, res) => {
+    try {
+        const userId = req.user;
+        const countCompleteChallenge = await Challenges.countAllCompleteChallenge(userId);
+        res.status(200).json({ count_complete_challenges: parseInt(countCompleteChallenge) });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: "Failed to count completed challenges." });
+    }
+};
 module.exports ={ getChallenges,
   getDailyChallenges,
    addChallenge, 
    markChallengeAsDone,
-    deleteChallenge}
+    deleteChallenge,
+  countAllChallenge,
+countAllCompleteChallenge}

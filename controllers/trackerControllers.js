@@ -1,4 +1,4 @@
-const { getUserById, Mood } = require("../model/trackerModel");
+const { getUserById, Mood } = require("../model/TrackerModel");
 
 const getUserInfo = async (req, res) => {
   try {
@@ -36,6 +36,27 @@ const getMoods = async (req, res) => {
   }
 };
 
+const countAllMoods = async (req, res) => {
+  try {
+    const userId = req.user;
+    const countMood = await Mood.countAllMoods(userId);
+    res.status(200).json({count_mood: parseInt(countMood)});
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Failed to count all moods." });
+  }
+}
+const moodStreaks = async (req, res) => {
+  try {
+    const userId = req.user;
+    const allStreaks = await Mood.getCurrentStreak(userId);
+    res.status(200).json({streaks: parseInt(allStreaks)});
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Failed to get streaks." });
+  }
+}
 
 
-module.exports = { getUserInfo, addMood, getMoods };
+
+module.exports = { getUserInfo, addMood, getMoods, countAllMoods, moodStreaks };

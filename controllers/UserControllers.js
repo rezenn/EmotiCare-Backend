@@ -1,5 +1,5 @@
 const User = require("../model/UserModel");
-const { getUserById, Mood } = require("../model/trackerModel");
+const { getUserById, Mood } = require("../model/TrackerModel");
 
 const userController = {
     async getUserEmail(req, res)  {
