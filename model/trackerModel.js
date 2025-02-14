@@ -23,6 +23,15 @@ class Mood  {
         );
         return result.rows;
     }
+
+    static async  getLatestMood(userId){
+        const result = await pool.query(
+            "SELECT mood_date, mood_emoji, mood_label FROM moods WHERE user_id = $1 ORDER BY mood_date DESC LIMIT 1", [userId]
+        );
+        return result.rows;
+    }
+
+
     static async getMoods(userId) {
         const result = await pool.query(
             "SELECT * FROM moods WHERE user_id = $1",

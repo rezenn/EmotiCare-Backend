@@ -12,6 +12,18 @@ const getUserInfo = async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve user info." });
   }
 };
+const getLatestMood = async (req, res) => {
+  try {
+    const userId = req.user;
+    if (!user) return res.status(404).json({ error: "User not found." });
+
+    const moods = await Mood.getLatestMood(userId);
+    res.status(200).json( moods );
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Failed to retrieve user info." });
+  }
+};
 
 const addMood = async (req, res) => {
   try {
@@ -25,6 +37,7 @@ const addMood = async (req, res) => {
     res.status(500).json({ error: "Failed to update mood." });
   }
 };
+
 const getMoods = async (req, res) => {
   try {
       const userId = req.user;
@@ -59,4 +72,4 @@ const moodStreaks = async (req, res) => {
 
 
 
-module.exports = { getUserInfo, addMood, getMoods, countAllMoods, moodStreaks };
+module.exports = { getUserInfo,getLatestMood, addMood, getMoods, countAllMoods, moodStreaks };
