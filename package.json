@@ -23,6 +23,7 @@
     "passport": "^0.7.0",
     "pg": "^8.13.1",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "spotify-web-api-node": "^5.0.2"
   }
 }

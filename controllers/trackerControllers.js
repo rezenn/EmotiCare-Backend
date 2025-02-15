@@ -14,14 +14,16 @@ const getUserInfo = async (req, res) => {
 };
 const getLatestMood = async (req, res) => {
   try {
-    const userId = req.user;
-    if (!user) return res.status(404).json({ error: "User not found." });
-
-    const moods = await Mood.getLatestMood(userId);
-    res.status(200).json( moods );
+    const userId = req.user; // Assuming user is authenticated and the user ID is stored in the request object
+    const latestMood = await Mood.getLatestMood(userId);
+    if (latestMood.length > 0) {
+      return res.json(latestMood[0]);  // Send the first (latest) mood to frontend
+    } else {
+      return res.status(404).json({ message: "No moods found for today." });
+    }
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ error: "Failed to retrieve user info." });
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
