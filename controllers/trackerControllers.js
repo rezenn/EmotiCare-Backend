@@ -60,7 +60,7 @@ const countAllMoods = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ error: "Failed to count all moods." });
   }
-}
+};
 const moodStreaks = async (req, res) => {
   try {
     const userId = req.user;
@@ -70,7 +70,7 @@ const moodStreaks = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ error: "Failed to get streaks." });
   }
-}
+};
 
 
 
