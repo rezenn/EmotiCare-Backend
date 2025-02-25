@@ -4,7 +4,6 @@ const addDailyJournal = async (req, res) => {
     const { title, description, entry_date, entry_time } = req.body;
     const userId = req.user;
 
-    // Check if any required field is missing
     if (!userId || !title || !description || !entry_date || !entry_time) {
         return res.status(400).json({ error: "All fields are required." });
     }

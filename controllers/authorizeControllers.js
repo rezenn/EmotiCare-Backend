@@ -61,7 +61,7 @@ const forgotPassword = async (req, res) => {
         }
 
         const salt = await bcrypt.genSalt(10);
-        const bcryptPassword = await bcrypt.hash(newPassword, salt); // Corrected here
+        const bcryptPassword = await bcrypt.hash(newPassword, salt); 
 
         const updatedUser = await User.updatePassword({ email, password: bcryptPassword });
 

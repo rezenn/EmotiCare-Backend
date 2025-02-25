@@ -17,7 +17,7 @@ class Journal {
     static async getDailyJournal(userId) {
         try {
             const journal = await pool.query(
-                "SELECT title, description, entry_date, entry_time FROM dailyJournals WHERE user_id = $1",
+                "SELECT title, description, entry_date, entry_time FROM dailyJournals WHERE user_id = $1 ORDER BY entry_date DESC, entry_time DESC;",
                 [userId]
             );
             return journal.rows; // Fixed variable name

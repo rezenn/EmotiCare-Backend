@@ -43,7 +43,7 @@ class Challenges{
             AND 
               uc.user_id = $1 
             WHERE 
-              c.CreatedBy = $1`, // Only challenges created by the user
+              c.CreatedBy = $1`, 
             [userID]
           );
       
@@ -72,7 +72,7 @@ class Challenges{
               uc.user_id = $1 
             WHERE 
               c.CreatedBy = $1
-          OR IsPreloaded = true`, // Only challenges created by the user
+          OR IsPreloaded = true`,
             [userID]
           );
       
@@ -85,7 +85,6 @@ class Challenges{
 
       static async markChallengeAsDone(userID, challengeID) {
         try {
-          // Check if the challenge exists
           const challengeResult = await pool.query(
             "SELECT * FROM challenges WHERE challenge_id = $1",
             [challengeID]
@@ -95,21 +94,18 @@ class Challenges{
             throw new Error("Challenge not found.");
           }
       
-          // Check if the user already has this challenge in `userChallenges`
           const existingChallenge = await pool.query(
             "SELECT * FROM userChallenges WHERE user_id = $1 AND challenge_id = $2",
             [userID, challengeID]
           );
       
           if (existingChallenge.rowCount === 0) {
-            // If not exists, insert a new row
             await pool.query(
               "INSERT INTO userChallenges (user_id, challenge_id, isdone) VALUES ($1, $2, true)",
               [userID, challengeID]
             );
             return { success: true, message: "Challenge marked as done." };
           } else {
-            // If exists, toggle isdone status
             const updatedResult = await pool.query(
               "UPDATE userChallenges SET isdone = NOT isdone WHERE user_id = $1 AND challenge_id = $2 RETURNING isdone",
               [userID, challengeID]
@@ -125,7 +121,6 @@ class Challenges{
 
   static async deleteChallenge(challengeID) {
         try {
-          // Start a transaction for  atomicity
           await pool.query('BEGIN');
       
           await pool.query(

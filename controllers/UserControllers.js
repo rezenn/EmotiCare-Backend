@@ -41,7 +41,6 @@ const userController = {
           const { user_name, full_name, birthday, gender } = req.body;
           const profile_picture_url = req.file ? `/uploads/${req.file.filename}` : null;
       
-          // Ensure the date is in YYYY-MM-DD format
           const formattedBirthday = new Date(birthday).toISOString().split('T')[0];
       
           const updatedUser = await User.updateProfile({

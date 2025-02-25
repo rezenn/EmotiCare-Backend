@@ -1,11 +1,9 @@
-const Notes = require("../model/NotesModel"); // Import the Notes class
-
+const Notes = require("../model/NotesModel"); 
 const createNote = async (req, res) => {
     try {
         const { noteDesc } = req.body;
         const userId = req.user;
-
-        const note = await Notes.addNotes(userId, noteDesc); // Use the correct method
+        const note = await Notes.addNotes(userId, noteDesc); 
         res.status(201).json(note);
     } catch (error) {
         console.error(error.message);
@@ -16,7 +14,7 @@ const createNote = async (req, res) => {
 const getNote = async (req, res) => {
     try {
         const userId = req.user;
-        const notes = await Notes.getNotes(userId); // Use the correct method
+        const notes = await Notes.getNotes(userId); 
         res.status(200).json(notes);
     } catch (error) {
         console.error(error.message);

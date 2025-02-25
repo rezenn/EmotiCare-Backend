@@ -26,4 +26,4 @@ class Notes {
     }
 }
 
-module.exports = Notes; // Export the Notes class
+module.exports = Notes;
