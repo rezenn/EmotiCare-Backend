@@ -1,6 +1,3 @@
 ﻿# EmotiCare-Backend
 
  Youtube Link: https://youtu.be/FnMMYjAzEpU
-
-Figma Link: https://www.figma.com/design/Hik9tg2g9EAV81R2KcKeS4/EmotiCare?node-id=0-
-1&t=fYyfzGJN3hvqmhs3-1
